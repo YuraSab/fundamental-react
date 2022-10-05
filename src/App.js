@@ -25,9 +25,11 @@ const App = () => {
     console.log(title);
 
     const addNewPost = (e) => {
-        e.preventDefault();
+        e.preventDefault()
         console.log(`title`, title);
     }
+
+
 
 
     return (
@@ -46,6 +48,7 @@ const App = () => {
                     placeholder={"name of post"}
                 />
                 <MyInput type="text" placeholder={"name of post"}/>
+
                 <MyButton
                     onClick={addNewPost}
                 >

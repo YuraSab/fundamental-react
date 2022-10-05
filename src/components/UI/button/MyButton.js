@@ -5,8 +5,8 @@ const MyButton = ({children, ...props}) => {
     return (
         <button
              // all props which we get - will here
-             //{...props}
-            disabled={props.disabled}
+             {...props}
+            // disabled={props.disabled}
             className={classes.myBtn}
         >
             {/* inputted child */}
