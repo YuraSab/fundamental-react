@@ -1,4 +1,4 @@
-import React, {useMemo, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import Counter from "./components/Counter";
 import ClassCounter from "./components/ClassCounter";
 import styles from "./styles/App.css";
@@ -11,13 +11,16 @@ import MySelect from "./components/UI/select/MySelect";
 import PostFilter from "./components/PostFilter";
 import MyModal from "./components/UI/MyModal/MyModal";
 import {usePosts} from "./hooks/usePosts";
+import axios from "axios";
+import PostService from "./API/PostService";
+import Loader from "./components/UI/Loader/Loader";
 
 const App = () => {
 
     const [posts, setPosts] = useState([
-        {id: 1, title: "JS", body: "c text"},
-        {id: 2, title: "JAVA", body: "b text"},
-        {id: 3, title: "C++", body: "a text"},
+        // {id: 1, title: "JS", body: "c text"},
+        // {id: 2, title: "JAVA", body: "b text"},
+        // {id: 3, title: "C++", body: "a text"},
     ]);
     // const [posts2, setPosts2] = useState([
     //     {id: 1, title: "TypeScript", description: "some text"},
@@ -52,9 +55,12 @@ const App = () => {
     //     return sortedPosts.filter(post => post.title.toLowerCase().includes(filter.query.toLowerCase()))
     // }, [filter.query, sortedPosts])
 
-
     const sortedAndSearchPosts = usePosts(posts, filter.sort, filter.query);
+    const [isPostsLoading, setIsPostsLoading] = useState(true);
 
+    useEffect(() => {
+        fetchPosts()
+    }, []);
 
 
     const createPost = (newPost) => {
@@ -75,6 +81,16 @@ const App = () => {
     // }
 
 
+    async function fetchPosts() {
+        setIsPostsLoading(true);
+        setTimeout(async () =>{
+            const posts = await PostService.getAll();
+            setPosts(posts);
+            setIsPostsLoading(false);
+        }, 1000)
+    }
+
+
     return (
         <div className={"App"}>
             {/*<Counter/>*/}
@@ -92,12 +108,12 @@ const App = () => {
             <PostFilter filter={filter} setFilter={setFilter}/>
 
             {
-                // sortedAndSearchPosts.length !== 0
-                // ?
-                <PostList remove={removePost} posts={sortedAndSearchPosts} title={"List of posts"}/>
-                //{/*<PostList posts={posts2} title={"List of posts 2"}/>*/}
-                // : <h1 style={{textAlign: 'center'}}>No items found!</h1>
+                isPostsLoading
+                    ? <div style={{display: "flex", justifyContent: "center", marginTop: 50}}><Loader/></div>
+                    : <PostList remove={removePost} posts={sortedAndSearchPosts} title={"List of posts"}/>
+
             }
+            {/*<h1 style={{textAlign: 'center'}}>No items found!</h1>*/}
 
 
         </div>
