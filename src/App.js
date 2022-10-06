@@ -6,8 +6,10 @@ import PostItem from "./components/PostItem";
 import PostList from "./components/PostList";
 import MyButton from "./components/UI/button/MyButton";
 import MyInput from "./components/UI/input/MyInput";
-import PostForm from "./components/UI/PostForm";
+import PostForm from "./components/PostForm";
 import MySelect from "./components/UI/select/MySelect";
+import PostFilter from "./components/PostFilter";
+import MyModal from "./components/UI/MyModal/MyModal";
 
 const App = () => {
 
@@ -26,27 +28,33 @@ const App = () => {
     // console.log(title);
     // const [body, setBody] = useState('');
 
-    const [selectedSort, setSelectedSort] = useState('');
-    const [searchQuery, setSearchQuery] = useState('');
+    // const [selectedSort, setSelectedSort] = useState('');
+    // const [searchQuery, setSearchQuery] = useState('');
+
+    const [filter, setFilter] = useState({
+        sort: '',
+        query: ''
+    })
+
+    const [modal, setModal] = useState(false);
 
     const sortedPosts = useMemo(() => {
         console.log('worked');
-        if (selectedSort) {
-            return [...posts.sort((a,b) => a[selectedSort].localeCompare(b[selectedSort]))];
+        if (filter.sort) {
+            return [...posts.sort((a, b) => a[filter.sort].localeCompare(b[filter.sort]))];
         }
         return posts;
-    }, [selectedSort, posts]);
-
+    }, [filter.sort, posts]);
 
 
     const sortedAndSearchPosts = useMemo(() => {
-        return sortedPosts.filter(post => post.title.toLowerCase().includes(searchQuery))
-    }, [searchQuery, sortedPosts])
-
+        return sortedPosts.filter(post => post.title.toLowerCase().includes(filter.query.toLowerCase()))
+    }, [filter.query, sortedPosts])
 
 
     const createPost = (newPost) => {
         setPosts([...posts, newPost]);
+        setModal(false)
     }
 
 
@@ -55,12 +63,11 @@ const App = () => {
     }
 
 
-    const sortPosts = (sort) => {
-        setSelectedSort(sort);
-        // мутируємо копію нового масиву, не ламаючи старий масив
-        // setPosts([...posts.sort((a,b) => a[sort].localeCompare(b[sort]))])
-    }
-
+    // const sortPosts = (sort) => {
+    //     setSelectedSort(sort);
+    //     // мутируємо копію нового масиву, не ламаючи старий масив
+    //     // setPosts([...posts.sort((a,b) => a[sort].localeCompare(b[sort]))])
+    // }
 
 
     return (
@@ -69,34 +76,23 @@ const App = () => {
             {/*<ClassCounter/>*/}
             {/*<PostItem/>*/}
 
-            <PostForm create={createPost}/>
+            <MyButton onClick={() => setModal(true)} style={{marginTop: 30}}>
+                Create user
+            </MyButton>
+            <MyModal visible={modal} setVisible={setModal}>
+                <PostForm create={createPost}/>
+            </MyModal>
+
             <hr style={{margin: '15px 0'}}/>
-            <div>
-                <MyInput
-                    placeholder={"search"}
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                />
+            <PostFilter filter={filter} setFilter={setFilter}/>
 
-
-
-                <MySelect
-                    defaultValue={"sort by..."}
-                    options={[
-                        {value: 'title', name: "By title"},
-                        {value: 'body', name: "By description"}
-                    ]}
-                    value={selectedSort}
-                    onChange={sort => sortPosts(sort)}
-                />
-            </div>
             {
-                sortedAndSearchPosts.length !== 0
-                ? <PostList remove={removePost} posts={sortedAndSearchPosts} title={"List of posts"}/>
-                    //{/*<PostList posts={posts2} title={"List of posts 2"}/>*/}
-                : <h1 style={{textAlign: 'center'}}>No items found!</h1>
+                // sortedAndSearchPosts.length !== 0
+                // ?
+                <PostList remove={removePost} posts={sortedAndSearchPosts} title={"List of posts"}/>
+                //{/*<PostList posts={posts2} title={"List of posts 2"}/>*/}
+                // : <h1 style={{textAlign: 'center'}}>No items found!</h1>
             }
-
 
 
         </div>
