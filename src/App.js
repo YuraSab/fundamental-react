@@ -6,6 +6,7 @@ import PostItem from "./components/PostItem";
 import PostList from "./components/PostList";
 import MyButton from "./components/UI/button/MyButton";
 import MyInput from "./components/UI/input/MyInput";
+import PostForm from "./components/UI/PostForm";
 
 const App = () => {
 
@@ -21,30 +22,18 @@ const App = () => {
     // ]);
 
 
-    const [title, setTitle] = useState('');
+    // const [title, setTitle] = useState('');
     // const bodyInputRef = useRef();
     // console.log(title);
-    const [body, setBody] = useState('');
+    // const [body, setBody] = useState('');
 
 
 
-
-    const addNewPost = (e) => {
-        e.preventDefault()
-        // console.log(`title`, title);
-        // console.log(bodyInputRef.current.value);
-
-        const newPost = {
-            id: Date.now(),
-            title,
-            body
-        };
-        console.log(newPost);
-
+    const createPost = (newPost) => {
         setPosts([...posts, newPost]);
-        setTitle('');
-        setBody('');
     }
+
+
 
 
 
@@ -55,33 +44,7 @@ const App = () => {
             {/*<ClassCounter/>*/}
             {/*<PostItem/>*/}
 
-            <form>
-                {/* Controlled input */}
-                <MyInput
-                    value={title}
-                    onChange={e => setTitle(e.target.value)}
-                    type="text"
-                    placeholder={"name of post"}
-                />
-                {/* Uncontrolled input */}
-                {/*<MyInput*/}
-                {/*    ref={bodyInputRef}*/}
-                {/*    type={"text"}*/}
-                {/*    placeholder={"name of post"}*/}
-                {/*/>*/}
-                <MyInput
-                    value={body}
-                    onChange={e => setBody(e.target.value)}
-                    type="text"
-                    placeholder={"name of post"}
-                />
-
-                <MyButton
-                    onClick={addNewPost}
-                >
-                    Create post
-                </MyButton>
-            </form>
+            <PostForm create={createPost}/>
 
             <PostList posts={posts} title={"List of posts"}/>
             {/*<PostList posts={posts2} title={"List of posts 2"}/>*/}
