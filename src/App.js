@@ -15,6 +15,7 @@ import axios from "axios";
 import PostService from "./API/PostService";
 import Loader from "./components/UI/Loader/Loader";
 import {useFetching} from "./hooks/useFetching";
+import {getPageCount} from "./utils/pages";
 
 const App = () => {
 
@@ -55,13 +56,23 @@ const App = () => {
     // const sortedAndSearchPosts = useMemo(() => {
     //     return sortedPosts.filter(post => post.title.toLowerCase().includes(filter.query.toLowerCase()))
     // }, [filter.query, sortedPosts])
+    const [totalPages, setTotalPages] = useState(0);
+    const [limit, setLimit] = useState(10);
+    const [page, setPge] = useState(1);
+
 
     const sortedAndSearchPosts = usePosts(posts, filter.sort, filter.query);
     // const [isPostsLoading, setIsPostsLoading] = useState(true);
     const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
-        const posts = await PostService.getAll();
-        setPosts(posts);
-    })
+        const response = await PostService.getAll(limit, page);
+        setPosts(response.data);
+        // console.log(response);
+        const totalCount = response.headers[`x-total-count`];
+        // const l =
+        setTotalPages(getPageCount(totalCount, limit));
+    });
+    console.log(totalPages)
+
 
 
     useEffect( () => {
