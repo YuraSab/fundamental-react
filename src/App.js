@@ -14,6 +14,7 @@ import {usePosts} from "./hooks/usePosts";
 import axios from "axios";
 import PostService from "./API/PostService";
 import Loader from "./components/UI/Loader/Loader";
+import {useFetching} from "./hooks/useFetching";
 
 const App = () => {
 
@@ -56,9 +57,14 @@ const App = () => {
     // }, [filter.query, sortedPosts])
 
     const sortedAndSearchPosts = usePosts(posts, filter.sort, filter.query);
-    const [isPostsLoading, setIsPostsLoading] = useState(true);
+    // const [isPostsLoading, setIsPostsLoading] = useState(true);
+    const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
+        const posts = await PostService.getAll();
+        setPosts(posts);
+    })
 
-    useEffect(() => {
+
+    useEffect( () => {
         fetchPosts()
     }, []);
 
@@ -81,14 +87,7 @@ const App = () => {
     // }
 
 
-    async function fetchPosts() {
-        setIsPostsLoading(true);
-        setTimeout(async () =>{
-            const posts = await PostService.getAll();
-            setPosts(posts);
-            setIsPostsLoading(false);
-        }, 1000)
-    }
+
 
 
     return (
@@ -108,12 +107,17 @@ const App = () => {
             <PostFilter filter={filter} setFilter={setFilter}/>
 
             {
+                postError && <h1>Error: {postError}</h1>
+            }
+            {
                 isPostsLoading
-                    ? <div style={{display: "flex", justifyContent: "center", marginTop: 50}}><Loader/></div>
-                    : <PostList remove={removePost} posts={sortedAndSearchPosts} title={"List of posts"}/>
+                    ?
+                    <div style={{display: "flex", justifyContent: "center", marginTop: 50}}><Loader/></div>
+                    :
+                <PostList remove={removePost} posts={sortedAndSearchPosts} title={"List of posts"}/>
 
             }
-            {/*<h1 style={{textAlign: 'center'}}>No items found!</h1>*/}
+
 
 
         </div>
