@@ -75,7 +75,7 @@ const Posts = () => {
         // const l =
         setTotalPages(getPageCount(totalCount, limit));
     });
-    console.log(totalPages)
+    // console.log(totalPages)
 
 
     // useEffect(() => {

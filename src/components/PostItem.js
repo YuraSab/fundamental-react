@@ -8,7 +8,7 @@ const PostItem = (props) => {
     // console.log(props)
 
     const router = useHistory();
-    console.log(router)
+    // console.log(router)
 
     return (
             <div className={'post'}>
