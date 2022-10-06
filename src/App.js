@@ -15,7 +15,8 @@ import axios from "axios";
 import PostService from "./API/PostService";
 import Loader from "./components/UI/Loader/Loader";
 import {useFetching} from "./hooks/useFetching";
-import {getPageCount} from "./utils/pages";
+import {getPageCount, getPagesArray} from "./utils/pages";
+import Pagination from "./components/UI/pagination/Pagination";
 
 const App = () => {
 
@@ -58,12 +59,15 @@ const App = () => {
     // }, [filter.query, sortedPosts])
     const [totalPages, setTotalPages] = useState(0);
     const [limit, setLimit] = useState(10);
-    const [page, setPge] = useState(1);
+    const [page, setPage] = useState(1);
+
+
 
 
     const sortedAndSearchPosts = usePosts(posts, filter.sort, filter.query);
     // const [isPostsLoading, setIsPostsLoading] = useState(true);
-    const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
+    // const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
+    const [fetchPosts, isPostsLoading, postError] = useFetching(async (limit, page) => {
         const response = await PostService.getAll(limit, page);
         setPosts(response.data);
         // console.log(response);
@@ -74,11 +78,13 @@ const App = () => {
     console.log(totalPages)
 
 
+    // useEffect(() => {
+    //     fetchPosts()
+    // }, [page]);
 
-    useEffect( () => {
-        fetchPosts()
+    useEffect(() => {
+        fetchPosts(limit, page);
     }, []);
-
 
     const createPost = (newPost) => {
         setPosts([...posts, newPost]);
@@ -98,7 +104,10 @@ const App = () => {
     // }
 
 
-
+    const changePage = (page) => {
+        setPage(page);
+        fetchPosts(limit, page)
+    }
 
 
     return (
@@ -125,11 +134,11 @@ const App = () => {
                     ?
                     <div style={{display: "flex", justifyContent: "center", marginTop: 50}}><Loader/></div>
                     :
-                <PostList remove={removePost} posts={sortedAndSearchPosts} title={"List of posts"}/>
+                    <PostList remove={removePost} posts={sortedAndSearchPosts} title={"List of posts"}/>
 
             }
 
-
+            <Pagination page={page} changePage={changePage} totalPages={totalPages}/>
 
         </div>
     );
